@@ -30,9 +30,10 @@ def load_consolidate_data(options: Values) -> Tuple[ndarray, ndarray]:
     return consolidate_s_array, consolidate_out_adj_array
 
 
-def apply_diffusion_map(niche_adj_matrix: ndarray) -> List[int]:
+def apply_diffusion_map(options: Values, niche_adj_matrix: ndarray) -> List[int]:
     """
     Apply diffusion map to the niche adjacency matrix
+    :param options: Values, options
     :param niche_adj_matrix: ndarray, the adjacency matrix of the graph
     :return: ndarray, the NTScore
     """
@@ -41,8 +42,11 @@ def apply_diffusion_map(niche_adj_matrix: ndarray) -> List[int]:
 
     _, eigvecs = diffusion_map(niche_adj_matrix)
 
+    # save the eigenvectors
+    np.savetxt(f'{options.NTScore_dir}/DM_eigvecs.csv.gz', eigvecs, delimiter=',')
+
     # get the first eigenvector as the niche cluster score by default
-    niche_cluster_score = eigvecs[:, 0]
+    niche_cluster_score = eigvecs[:, 1]
 
     niche_cluster_path = niche_cluster_score.argsort().tolist()
 
@@ -52,8 +56,8 @@ def apply_diffusion_map(niche_adj_matrix: ndarray) -> List[int]:
 def get_niche_trajectory_path(options: Values, niche_adj_matrix: ndarray) -> List[int]:
     """
     Find niche level trajectory with maximum connectivity using Brute Force
-    :param adj_matrix: non-negative ndarray, adjacency matrix of the graph
-    :param methods: str, the method to find the niche trajectory path. Default is 'BF' (Brute Force).
+    :param options: Values, options
+    :param adj_matrix: ndarray, adjacency matrix of the graph
     :return: List[int], the niche trajectory
     """
     niche_adj_matrix = (niche_adj_matrix + niche_adj_matrix.T) / 2
