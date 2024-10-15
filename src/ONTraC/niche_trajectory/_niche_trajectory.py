@@ -37,7 +37,8 @@ def get_niche_trajectory_path(options: Values, niche_adj_matrix: ndarray) -> Lis
     :param methods: str, the method to find the niche trajectory path. Default is 'BF' (Brute Force).
     :return: List[int], the niche trajectory
     """
-
+    niche_adj_matrix = (niche_adj_matrix + niche_adj_matrix.T) / 2
+    
     if options.trajectory_construct == 'BF':
         info('Finding niche trajectory with maximum connectivity using Brute Force.')
 
