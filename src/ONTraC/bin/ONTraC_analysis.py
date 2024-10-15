@@ -81,7 +81,7 @@ def prepare_optparser() -> OptionParser:
 
     Ret: OptParser object.
     """
-    usage = """USAGE: %prog <-d DATASET> <--preprocessing-dir PREPROCESSING_DIR> <--GNN-dir GNN_DIR>
+    usage = """USAGE: %prog <--preprocessing-dir PREPROCESSING_DIR> <--GNN-dir GNN_DIR> <-d DATASET>
     <--NTScore-dir NTSCORE_DIR> <-o OUTPUT_DIR> [-l LOG_FILE] [-r REVERSE] [-s SAMPLE] [--scale-factor SCALE_FACTOR]
     [--suppress-cell-type-composition] [--suppress-niche-cluster-loadings] [--suppress-niche-trajectory]"""
     description = "Analysis the results of ONTraC."
@@ -99,8 +99,8 @@ def prepare_optparser() -> OptionParser:
                          default=False,
                          help='Reverse the NT score.')
     add_IO_options_group(optparser=optparser, io_options=IO_OPTIONS)
-    add_suppress_group(optparser)
     add_visualization_group(optparser)
+    add_suppress_group(optparser)
     return optparser
 
 

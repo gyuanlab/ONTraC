@@ -1,5 +1,11 @@
 # Change log
 
+## [XXXXX] - XXXX-XXX-XX
+
+Added:
+
+- `Diffusion map` as one niche trajectory construction method
+
 ## [1.0.7] - 2024-XXX-XX
 
 Added:

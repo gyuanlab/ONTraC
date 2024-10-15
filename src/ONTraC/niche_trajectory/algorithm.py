@@ -1,7 +1,8 @@
 import itertools
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
+from numpy import ndarray
 
 
 def brute_force(conn_matrix: np.ndarray) -> List[int]:
@@ -80,3 +81,20 @@ def held_karp(conn_matrix: np.ndarray) -> List[int]:
         optimal_path = []
 
     return optimal_path
+
+
+def diffusion_map(transit_matrix: ndarray) -> Tuple[ndarray, ndarray]:
+    """
+    diffusion map method
+    :param transit_matrix: ndarray, the transition matrix of the give graph
+    :return: Tuple[ndarray, ndarray], the eigenvalues and eigenvectors
+    """
+
+    D = np.diag(np.power(transit_matrix.sum(axis=1), -0.5))
+    L = D @ transit_matrix @ D
+    eigvals, eigvecs = np.linalg.eig(L)
+    idx = eigvals.argsort()[::-1]
+    eigvals = eigvals[idx]
+    eigvecs = eigvecs[:, idx]
+
+    return eigvals, eigvecs

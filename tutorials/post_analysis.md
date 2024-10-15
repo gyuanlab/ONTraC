@@ -200,8 +200,11 @@ fig.savefig('figures/Spatial_max_niche_cluster.png', dpi=300)
 
 ```{python}
 import networkx as nx
+import matplotlib.gridspec as gridspec
+
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize
+from matplotlib.colors import LinearSegmentedColormap, Normalize
+
 
 G = nx.Graph(ana_data.niche_cluster_connectivity)
 
@@ -216,20 +219,39 @@ sm = ScalarMappable(cmap=plt.cm.rainbow, norm=norm)  # type: ignore
 nc_scores = 1 - ana_data.niche_cluster_score if ana_data.options.reverse else ana_data.niche_cluster_score
 niche_cluster_colors = [sm.to_rgba(nc_scores[n]) for n in G.nodes]
 
-fig, ax = plt.subplots(figsize=(6, 6))
-nx.draw(
+# Create a figure
+fig = plt.figure(figsize=(7, 6))
+
+# Create a gridspec with 1 row and 2 columns, with widths of A and B
+gs = gridspec.GridSpec(1, 2, width_ratios=[6, 1])  # 6:1 ratio
+ax1 = fig.add_subplot(gs[0])
+ax2 = fig.add_subplot(gs[1])
+
+# Draw the graph
+nx.draw_networkx_nodes(G, pos, node_color=niche_cluster_colors, node_size=500, ax=ax1)
+nx.draw_networkx_edges(
     G,
     pos,
-    with_labels=True,
-    node_color=niche_cluster_colors,  # Comment this line if you don't want colors corresponding to NT score
-    node_size=1500,
     edge_color=weights,
+    alpha=weights,
     width=3.0,
     edge_cmap=plt.cm.Reds,  # type: ignore
-    connectionstyle='arc3,rad=0.1',
-    ax=ax)
-ax.set_title('Niche cluster connectivity')
+    ax=ax1)
+nx.draw_networkx_labels(G, pos, ax=ax1)
+ax1.set_title('Niche cluster connectivity')
+
+# Draw the colorbar
+colors = [(1, 1, 1, 0), (1, 0, 0, 1)]
+custom_cmap = LinearSegmentedColormap.from_list('custom_cmap', colors)
+gradient = np.linspace(1, 0, 1000).reshape(-1, 1)
+ax2.imshow(gradient, aspect='auto', cmap=custom_cmap)
+ax2.set_xticks([])
+ax2.set_yticks(np.linspace(1000, 0, 5))
+ax2.set_yticklabels(f'{x:.2f}' for x in np.linspace(0, ana_data.niche_cluster_connectivity.max(), 5))
+ax2.set_ylabel('Connectivity')
+
 fig.tight_layout()
+
 fig.savefig('figures/Niche_cluster_connectivity.png', dpi=300)
 ```
 

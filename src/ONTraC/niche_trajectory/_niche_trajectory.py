@@ -9,7 +9,7 @@ from scipy.sparse import load_npz
 
 from ..data import SpatailOmicsDataset
 from ..log import error, info
-from .algorithm import brute_force, held_karp
+from .algorithm import brute_force, diffusion_map, held_karp
 
 
 def load_consolidate_data(options: Values) -> Tuple[ndarray, ndarray]:
@@ -28,6 +28,25 @@ def load_consolidate_data(options: Values) -> Tuple[ndarray, ndarray]:
     consolidate_out_adj_array = np.loadtxt(fname=f'{options.GNN_dir}/consolidate_out_adj.csv.gz', delimiter=',')
 
     return consolidate_s_array, consolidate_out_adj_array
+
+
+def apply_diffusion_map(niche_adj_matrix: ndarray) -> List[int]:
+    """
+    Apply diffusion map to the niche adjacency matrix
+    :param niche_adj_matrix: ndarray, the adjacency matrix of the graph
+    :return: ndarray, the NTScore
+    """
+
+    info('Applying diffusion map to the niche adjacency matrix.')
+
+    _, eigvecs = diffusion_map(niche_adj_matrix)
+
+    # get the first eigenvector as the niche cluster score by default
+    niche_cluster_score = eigvecs[:, 0]
+
+    niche_cluster_path = niche_cluster_score.argsort().tolist()
+
+    return niche_cluster_path
 
 
 def get_niche_trajectory_path(options: Values, niche_adj_matrix: ndarray) -> List[int]:
@@ -49,6 +68,9 @@ def get_niche_trajectory_path(options: Values, niche_adj_matrix: ndarray) -> Lis
 
         niche_trajectory_path = held_karp(niche_adj_matrix)
 
+    elif options.trajectory_construct == 'DM':
+        niche_trajectory_path = apply_diffusion_map(niche_adj_matrix=niche_adj_matrix)
+
     return niche_trajectory_path
 
 
@@ -67,33 +89,8 @@ def trajectory_path_to_NC_score(niche_trajectory_path: List[int]) -> ndarray:
     for i, index in enumerate(niche_trajectory_path):
         # debug(f'i: {i}, index: {index}')
         niche_NT_score[index] = values[i]
+        
     return niche_NT_score
-
-
-def apply_diffusion_map(niche_adj_matrix: ndarray) -> ndarray:
-    """
-    Apply diffusion map to the niche adjacency matrix
-    :param niche_adj_matrix: ndarray, the adjacency matrix of the graph
-    :return: ndarray, the NTScore
-    """
-
-    info('Applying diffusion map to the niche adjacency matrix.')
-
-    # niche_adj_matrix = niche_adj_matrix + niche_adj_matrix.T
-    D = np.diag(np.power(niche_adj_matrix.sum(axis=1), -0.5))
-    L = D @ niche_adj_matrix @ D
-    eigvals, eigvecs = np.linalg.eig(L)
-    idx = eigvals.argsort()[::-1]
-    eigvals = eigvals[idx]
-    eigvecs = eigvecs[:, idx]
-    niche_cluster_score = eigvecs[:, 1]
-    # normalize to [0, 1]
-    # niche_cluster_score -= niche_cluster_score.min()
-    # niche_cluster_score /= niche_cluster_score.max()
-    # normalize to [-1, 1] by rank
-    niche_cluster_score = niche_cluster_score.argsort().argsort()
-    niche_cluster_score = niche_cluster_score / (niche_cluster_score.size - 1)
-    return niche_cluster_score
 
 
 def get_niche_NTScore(options: Values, niche_cluster_loading: ndarray,
@@ -107,12 +104,10 @@ def get_niche_NTScore(options: Values, niche_cluster_loading: ndarray,
 
     info('Calculating NTScore for each niche.')
 
-    if options.trajectory_construct == 'DM':
-        niche_cluster_score = apply_diffusion_map(niche_adj_matrix)
-    else:
-        niche_trajectory_path = get_niche_trajectory_path(options=options, niche_adj_matrix=niche_adj_matrix)
-        niche_cluster_score = trajectory_path_to_NC_score(niche_trajectory_path)
+    niche_trajectory_path = get_niche_trajectory_path(options=options, niche_adj_matrix=niche_adj_matrix)
+    niche_cluster_score = trajectory_path_to_NC_score(niche_trajectory_path)
     niche_level_NTScore = niche_cluster_loading @ niche_cluster_score
+    
     return niche_cluster_score, niche_level_NTScore
 
 

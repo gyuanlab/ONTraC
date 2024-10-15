@@ -49,6 +49,9 @@ def write_version_info() -> None:
 #  - ONTraC_GNN
 #    - read_original_data
 #    - valid_original_data
+#  - ONTraC_GP
+#    - read_original_data
+#    - valid_original_data
 # ------------------------------------
 
 

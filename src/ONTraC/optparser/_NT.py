@@ -20,8 +20,8 @@ def prepare_NT_optparser() -> OptionParser:
     :return: OptionParser object.
     """
     usage = f'''USAGE: %prog <--preprocessing-dir PREPROCESSING_DIR> <--GNN-dir GNN_DIR> <--NTScore-dir NTSCORE_DIR> 
-            <--trajectory-construct TRAJECTORY_CONSTRUCT>'''
-    description = 'PseudoTime: Calculate PseudoTime for each node in a graph'
+            [--trajectory-construct TRAJECTORY_CONSTRUCT]'''
+    description = 'Niche trajectory: construct niche trajectory for niche cluster and project the NT score to each cell'
 
     # option processor
     optparser = OptionParser(version=f'%prog {__version__}', description=description, usage=usage, add_help_option=True)

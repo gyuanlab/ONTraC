@@ -17,8 +17,6 @@ def add_IO_options_group(optparser: OptionParser, io_options: Optional[List[str]
         return
     # I/O options group
     group_io = OptionGroup(optparser, "IO")
-    if 'dataset' in io_options:
-        group_io.add_option('-d', '--dataset', dest='dataset', type='string', help='Original input dataset.')
     if 'preprocessing_dir' in io_options:
         group_io.add_option('--preprocessing-dir',
                             dest='preprocessing_dir',
@@ -28,6 +26,8 @@ def add_IO_options_group(optparser: OptionParser, io_options: Optional[List[str]
         group_io.add_option('--GNN-dir', dest='GNN_dir', type='string', help='Directory for the GNN output.')
     if 'NTScore_dir' in io_options:
         group_io.add_option('--NTScore-dir', dest='NTScore_dir', type='string', help='Directory for the NTScore output.')
+    if 'dataset' in io_options:
+        group_io.add_option('-d', '--dataset', dest='dataset', type='string', help='Original input dataset.')
 
     optparser.add_option_group(group_io)
 

@@ -89,7 +89,7 @@ def prepare_create_ds_optparser() -> OptionParser:
     :return: OptionParser object.
     """
 
-    usage = f'''USAGE: %prog <-d DATASET> <--preprocessing-dir PREPROCESSING_DIR> [--n-cpu N_CPU] [--n-neighbors N_NEIGHBORS] [--n-local N_LOCAL]'''
+    usage = f'''USAGE: %prog <--preprocessing-dir PREPROCESSING_DIR> <-d DATASET> [--n-cpu N_CPU] [--n-neighbors N_NEIGHBORS] [--n-local N_LOCAL]'''
     description = 'Create dataset for follwoing analysis.'
 
     # option processor
