@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Type
 
 import numpy as np
 import pandas as pd
+from ONTraC.utils._utils import out_adj_norm
 import torch
 from scipy.sparse import load_npz
 from torch import Tensor
@@ -146,6 +147,7 @@ def predict(output_dir: str, batch_train: SubBatchTrainProtocol, dataset: Spatai
         # consolidate out_adj
         ind = torch.arange(consolidate_s.shape[-1], device=consolidate_out_adj.device)  # type: ignore
         consolidate_out_adj[ind, ind] = 0  # type: ignore
+        consolidate_out_adj = out_adj_norm(consolidate_s, consolidate_out_adj)
         d = torch.einsum('ij->i', consolidate_out_adj)
         d = torch.sqrt(d)[:, None] + 1e-15
         consolidate_out_adj = (consolidate_out_adj / d) / d.transpose(0, 1)
