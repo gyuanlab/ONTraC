@@ -67,6 +67,16 @@ def add_GNN_options_group(group_train: OptionGroup) -> None:
                            type='int',
                            default=4,
                            help='Number of hidden features. Default is 4.')
+    group_train.add_option('--degree-out-adj-norm',
+                           dest='degree_out_adj_norm',
+                           action='store_true',
+                           default=False,
+                           help='Perform degree normalization on adjacency matrix.')
+    group_train.add_option('--expectation-out-adj-norm',
+                           dest='expectation_out_adj_norm',
+                           action='store_true',
+                           default=False,
+                           help='Perform expected random assignment normalization on adjacency matrix.')
 
 
 def add_NP_options_group(group_train: OptionGroup) -> None:
@@ -196,6 +206,10 @@ def write_GNN_options_memo(options: Values) -> None:
     """
 
     info(f'hidden_feats:  {options.hidden_feats}')
+    if hasattr(options, 'degree_out_adj_norm'):
+        info(f'Degree normalization on adjacency matrix: {options.degree_out_adj_norm}')
+    if hasattr(options, 'expectation_out_adj_norm'):
+        info(f'Expected random assignment normalization on adjacency matrix: {options.expection_out_adj_norm}')
 
 
 def write_NP_options_memo(options: Values) -> None:
