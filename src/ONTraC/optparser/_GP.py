@@ -24,7 +24,8 @@ def prepare_GP_optparser() -> OptionParser:
     [--device DEVICE] [--epochs EPOCHS] [--patience PATIENCE] [--min-delta MIN_DELTA] [--min-epochs MIN_EPOCHS] [--batch-size BATCH_SIZE] 
     [-s SEED] [--seed SEED] [--lr LR] [--hidden-feats HIDDEN_FEATS] [-k K_CLUSTERS]
     [--modularity-loss-weight MODULARITY_LOSS_WEIGHT] [--purity-loss-weight PURITY_LOSS_WEIGHT] 
-    [--regularization-loss-weight REGULARIZATION_LOSS_WEIGHT] [--beta BETA] [--trajectory-construct TRAJECTORY_CONSTRUCT]'''
+    [--regularization-loss-weight REGULARIZATION_LOSS_WEIGHT] [--beta BETA] [--degree-out-adj-norm] [--expectation-out-adj-norm]
+    [--trajectory-construct TRAJECTORY_CONSTRUCT]'''
     description = 'ONTraC_GP: GNN and Niche Trajectory'
 
     # option processor

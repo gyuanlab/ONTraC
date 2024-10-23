@@ -2,6 +2,7 @@ import sys
 from copy import deepcopy
 from optparse import Values
 from typing import Dict
+import torch
 
 import pandas as pd
 import yaml
@@ -216,3 +217,27 @@ def round_epoch_filter(epoch: int) -> bool:
         return n % (10**(num - 1)) == 0
 
     return epoch < 10 or _is_power_of_10(epoch)
+
+def out_adj_norm(options: Values, consolidate_s: torch.Tensor, consolidate_out_adj: torch.Tensor) -> torch.Tensor:
+    """
+    Normalize the adjacency matrix by either degree normalization or comparing to the expected adjacency matrix
+    under random edge assignments. 
+    :param consolidate_s: torch.Tensor
+    :param consolidate_out_adj: torch.Tensor    
+    :return: torch.Tensor
+    """
+    ind = torch.arange(consolidate_s.shape[-1], device=consolidate_out_adj.device)  # type: ignore
+    consolidate_out_adj[ind, ind] = 0  # type: ignore
+    if options.expectation_out_adj_norm:
+        cluster_sizes = torch.einsum('ij->j', consolidate_s)
+        total_nodes = cluster_sizes.sum()
+        expected_out_adj = torch.outer(cluster_sizes, cluster_sizes) / (total_nodes ** 2)
+        expected_out_adj = expected_out_adj * consolidate_out_adj.sum()
+        normalized_out_adj = consolidate_out_adj / (expected_out_adj + 1e-15)
+    if options.degree_out_adj_norm:
+        d = torch.einsum('ij->i', consolidate_out_adj)
+        d = torch.sqrt(d)[:, None] + 1e-15
+        normalized_out_adj = (consolidate_out_adj / d) / d.transpose(0, 1)
+    if not options.expectation_out_adj_norm and not options.degree_out_adj_norm:
+        normalized_out_adj = consolidate_out_adj
+    return normalized_out_adj

@@ -8,6 +8,7 @@ from ONTraC.data import load_dataset
 from ONTraC.GNN._GNN import SpatailOmicsDataset
 from ONTraC.model import GraphPooling
 from ONTraC.train import GPBatchTrain
+from ONTraC.utils._utils import out_adj_norm
 
 
 @pytest.fixture
@@ -68,3 +69,53 @@ def test_train(options: Values, sample_loader: DenseDataLoader, nn_model: torch.
     trained_params = torch.load(f'{options.GNN_dir}/epoch_1.pt', map_location=torch.device('cpu'))
     for k, v in nn_model.named_parameters():
         assert torch.allclose(v, trained_params[k], rtol=0.05)  # there are some difference between linux and macOS (may be caused by chip?)
+
+def test_out_adj_norm(options: Values):
+    """
+    Test the normalization methods.
+    :param options: options.
+    :return: None.
+    """
+    consolidate_s = torch.tensor([[1, 0, 0],
+                                  [1, 0, 0],
+                                  [0, 1, 0],
+                                  [0, 1, 0],
+                                  [0, 0, 1]], dtype=torch.float32)
+    consolidate_out_adj = torch.tensor([[0, 1, 1],
+                                        [1, 0, 0],
+                                        [1, 1, 0]], dtype=torch.float32)
+    # Case 1: Use both normalization
+    options.expectation_out_adj_norm = True
+    options.degree_out_adj_norm = True
+    normalized_out_adj = out_adj_norm(options, consolidate_s, consolidate_out_adj)
+    expected_out_adj = torch.tensor([[0.0000, 0.7071, 0.5000],
+                                    [0.7071, 0.0000, 0.0000],
+                                    [0.5000, 0.7071, 0.0000]], dtype=torch.float32)
+    assert torch.allclose(normalized_out_adj, expected_out_adj, atol=1e-4)
+
+    # Case 2: Use only expectation_out_adj_norm
+    options.expectation_out_adj_norm = True
+    options.degree_out_adj_norm = False
+    normalized_out_adj = out_adj_norm(options, consolidate_s, consolidate_out_adj)
+    expected_out_adj = torch.tensor([[0.0000, 1.2500, 2.5000],
+                                    [1.2500, 0.0000, 0.0000],
+                                    [2.5000, 2.5000, 0.0000]], dtype=torch.float32)
+    assert torch.allclose(normalized_out_adj, expected_out_adj, atol=1e-4)
+    
+    # Case 3: Use only degree_out_adj_norm
+    options.expectation_out_adj_norm = False
+    options.degree_out_adj_norm = True
+    normalized_out_adj = out_adj_norm(options, consolidate_s, consolidate_out_adj)
+    expected_out_adj = torch.tensor([[0.0000, 0.7071, 0.5000],
+                                    [0.7071, 0.0000, 0.0000],
+                                    [0.5000, 0.7071, 0.0000]], dtype=torch.float32)
+    assert torch.allclose(normalized_out_adj, expected_out_adj, atol=1e-4)
+
+    # Case 4: Do not perform any normalization
+    options.expectation_out_adj_norm = False
+    options.degree_out_adj_norm = False
+    normalized_out_adj = out_adj_norm(options, consolidate_s, consolidate_out_adj)
+    expected_out_adj = torch.tensor([[0., 1., 1.],
+                                    [1., 0., 0.],
+                                    [1., 1., 0.]], dtype=torch.float32)
+    assert torch.allclose(normalized_out_adj, expected_out_adj, atol=1e-4)

@@ -23,7 +23,8 @@ def prepare_GNN_optparser() -> OptionParser:
     [--epochs EPOCHS] [--patience PATIENCE] [--min-delta MIN_DELTA] [--min-epochs MIN_EPOCHS] [--batch-size BATCH_SIZE] 
     [-s SEED] [--seed SEED] [--lr LR] [--hidden-feats HIDDEN_FEATS] [-k K_CLUSTERS]
     [--modularity-loss-weight MODULARITY_LOSS_WEIGHT] [--purity-loss-weight PURITY_LOSS_WEIGHT] 
-    [--regularization-loss-weight REGULARIZATION_LOSS_WEIGHT] [--beta BETA]'''
+    [--regularization-loss-weight REGULARIZATION_LOSS_WEIGHT] [--beta BETA] [--degree-out-adj-norm]
+    [--expectation-out-adj-norm]'''
     description = 'Graph Neural Network (GNN)'
 
     # option processor

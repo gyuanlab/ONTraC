@@ -74,7 +74,8 @@ def gnn(options: Values, ori_data_df: pd.DataFrame, nn_model: Type[torch.nn.Modu
     # evaluate
     evaluate(batch_train=batch_train, model_name='GraphPooling')
     # predict
-    consolidate_s_array, _ = predict(output_dir=options.GNN_dir,
+    consolidate_s_array, _ = predict(options=options,
+                                     output_dir=options.GNN_dir,
                                      batch_train=batch_train,
                                      dataset=dataset,
                                      model_name='GraphPooling')
