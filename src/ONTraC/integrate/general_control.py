@@ -11,7 +11,7 @@ from ..optparser._NN import write_niche_net_constr_memo
 from ..optparser._NT import write_NT_options_memo
 from ..optparser._preprocessing import write_preprocessing_memo
 from ..optparser._train import write_GCN_options_memo, write_GP_options_memo, write_train_options_memo
-from ..run.processes import niche_trajectory_construct, gnn, niche_network_construct
+from ..run.processes import gnn, niche_network_construct, niche_trajectory_construct
 
 
 def io_opt_valid(options: Values, process='ontrac', io_options: Optional[List[str]] = None) -> Values:
@@ -116,9 +116,10 @@ def preprocessing_opt_valid(options: Values, process='ontrac') -> Values:
         if not hasattr(options, 'dc_cell_type_num'):
             options.dc_cell_type_num = 10
         elif not isinstance(options.dc_cell_type_num, int):
-            raise ValueError(f'dc_cell_type_num should be an integer. You provided {options.dc_cell_type_num}.')
-        else:
-            options.dc_cell_type_num = int(options.dc_cell_type_num)
+            try:
+                options.dc_cell_type_num = int(options.dc_cell_type_num)
+            except ValueError:
+                raise ValueError(f'dc_cell_type_num should be an integer. You provided {options.dc_cell_type_num}.')
         if options.dc_cell_type_num < 2:
             raise ValueError(f'dc_cell_type_num should be greater than 2. You provided {options.dc_cell_type_num}.')
     else:
@@ -142,9 +143,10 @@ def niche_net_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'n_cpu'):
         options.n_cpu = 4
     elif not isinstance(options.n_cpu, int):
-        raise ValueError(f'n_cpu should be an integer. You provided {options.n_cpu}.')
-    else:
-        options.n_cpu = int(options.n_cpu)
+        try:
+            options.n_cpu = int(options.n_cpu)
+        except ValueError:
+            raise ValueError(f'n_cpu should be an integer. You provided {options.n_cpu}.')
     if options.n_cpu < 1:
         raise ValueError(f'n_cpu should be greater than 0. You provided {options.n_cpu}.')
 
@@ -152,9 +154,10 @@ def niche_net_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'n_neighbors'):
         options.n_neighbors = 50
     elif not isinstance(options.n_neighbors, int):
-        raise ValueError(f'n_neighbors should be an integer. You provided {options.n_neighbors}.')
-    else:
-        options.n_neighbors = int(options.n_neighbors)
+        try:
+            options.n_neighbors = int(options.n_neighbors)
+        except ValueError:
+            raise ValueError(f'n_neighbors should be an integer. You provided {options.n_neighbors}.')
     if options.n_neighbors < 1:
         raise ValueError(f'n_neighbors should be greater than 0. You provided {options.n_neighbors}.')
 
@@ -162,9 +165,10 @@ def niche_net_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'n_local'):
         options.n_local = 20
     elif not isinstance(options.n_local, int):
-        raise ValueError(f'n_local should be an integer. You provided {options.n_local}.')
-    else:
-        options.n_local = int(options.n_local)
+        try:
+            options.n_local = int(options.n_local)
+        except ValueError:
+            raise ValueError(f'n_local should be an integer. You provided {options.n_local}.')
     if options.n_local < 2:
         raise ValueError(f'n_local should be greater than 1. You provided {options.n_local}.')
 
@@ -195,9 +199,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'epochs'):
         options.epochs = 1000
     elif not isinstance(options.epochs, int):
-        raise ValueError(f'epochs should be an integer. You provided {options.epochs}.')
-    else:
-        options.epochs = int(options.epochs)
+        try:
+            options.epochs = int(options.epochs)
+        except ValueError:
+            raise ValueError(f'epochs should be an integer. You provided {options.epochs}.')
     if options.epochs < 1:
         raise ValueError(f'epochs should be greater than 0. You provided {options.epochs}.')
 
@@ -205,9 +210,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'patience'):
         options.patience = 100
     elif not isinstance(options.patience, int):
-        raise ValueError(f'patience should be an integer. You provided {options.patience}.')
-    else:
-        options.patience = int(options.patience)
+        try:
+            options.patience = int(options.patience)
+        except ValueError:
+            raise ValueError(f'patience should be an integer. You provided {options.patience}.')
     if options.patience < 1:
         raise ValueError(f'patience should be greater than 0. You provided {options.patience}.')
 
@@ -215,9 +221,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'min_delta'):
         options.min_delta = 0.001
     elif not isinstance(options.min_delta, float):
-        raise ValueError(f'min_delta should be a float. You provided {options.min_delta}.')
-    else:
-        options.min_delta = float(options.min_delta)
+        try:
+            options.min_delta = float(options.min_delta)
+        except ValueError:
+            raise ValueError(f'min_delta should be a float. You provided {options.min_delta}.')
     if not 0 < options.min_delta < 1:
         raise ValueError(f'min_delta should be in the range of (0, 1). You provided {options.min_delta}.')
 
@@ -225,9 +232,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'min_epochs'):
         options.min_epochs = 50
     elif not isinstance(options.min_epochs, int):
-        raise ValueError(f'min_epochs should be an integer. You provided {options.min_epochs}.')
-    else:
-        options.min_epochs = int(options.min_epochs)
+        try:
+            options.min_epochs = int(options.min_epochs)
+        except ValueError:
+            raise ValueError(f'min_epochs should be an integer. You provided {options.min_epochs}.')
     if options.min_epochs < 1:
         raise ValueError(f'min_epochs should be greater than 0. You provided {options.min_epochs}.')
 
@@ -235,9 +243,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'batch_size'):
         options.batch_size = 0
     elif not isinstance(options.batch_size, int):
-        raise ValueError(f'batch_size should be an integer. You provided {options.batch_size}.')
-    else:
-        options.batch_size = int(options.batch_size)
+        try:
+            options.batch_size = int(options.batch_size)
+        except ValueError:
+            raise ValueError(f'batch_size should be an integer. You provided {options.batch_size}.')
     if options.batch_size < 0:
         raise ValueError(f'batch_size should be greater than or equal to 0. You provided {options.batch_size}.')
 
@@ -245,17 +254,19 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'seed'):
         options.seed = 42
     elif not isinstance(options.seed, int):
-        raise ValueError(f'seed should be an integer. You provided {options.seed}.')
-    else:
-        options.seed = int(options.seed)
+        try:
+            options.seed = int(options.seed)
+        except ValueError:
+            raise ValueError(f'seed should be an integer. You provided {options.seed}.')
 
     # lr
     if not hasattr(options, 'lr'):
         options.lr = 0.03
     elif not isinstance(options.lr, float):
-        raise ValueError(f'Learning rate should be a float. You provided {options.lr}.')
-    else:
-        options.lr = float(options.lr)
+        try:
+            options.lr = float(options.lr)
+        except ValueError:
+            raise ValueError(f'Learning rate should be a float. You provided {options.lr}.')
     if options.lr < 0:
         raise ValueError(f'Learning rate should be greater than 0. You provided {options.lr}.')
 
@@ -263,9 +274,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'hidden_feats'):
         options.hidden_feats = 4
     elif not isinstance(options.hidden_feats, int):
-        raise ValueError(f'hidden_feats should be an integer. You provided {options.hidden_feats}.')
-    else:
-        options.hidden_feats = int(options.hidden_feats)
+        try:
+            options.hidden_feats = int(options.hidden_feats)
+        except ValueError:
+            raise ValueError(f'hidden_feats should be an integer. You provided {options.hidden_feats}.')
     if options.hidden_feats < 1:
         raise ValueError(f'hidden_feats should be greater than 0. You provided {options.hidden_feats}.')
 
@@ -273,17 +285,19 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'n_gcn_layers'):
         options.n_gcn_layers = 2
     elif not isinstance(options.n_gcn_layers, int):
-        raise ValueError(f'n_gcn_layers should be an integer. You provided {options.n_gcn_layers}.')
-    else:
-        options.n_gcn_layers = int(options.n_gcn_layers)
+        try:
+            options.n_gcn_layers = int(options.n_gcn_layers)
+        except ValueError:
+            raise ValueError(f'n_gcn_layers should be an integer. You provided {options.n_gcn_layers}.')
 
     # k
     if not hasattr(options, 'k'):
         options.k = 6
     elif not isinstance(options.k, int):
-        raise ValueError(f'k-cluster should be an integer. You provided {options.k}.')
-    else:
-        options.k = int(options.k)
+        try:
+            options.k = int(options.k)
+        except ValueError:
+            raise ValueError(f'k-cluster should be an integer. You provided {options.k}.')
     if options.k < 2:
         raise ValueError(f'k-cluster should be greater than 1. You provided {options.k}.')
 
@@ -291,9 +305,11 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'modularity_loss_weight'):
         options.modularity_loss_weight = 0.3
     elif not isinstance(options.modularity_loss_weight, float):
-        raise ValueError(f'modularity_loss_weight should be a float. You provided {options.modularity_loss_weight}.')
-    else:
-        options.modularity_loss_weight = float(options.modularity_loss_weight)
+        try:
+            options.modularity_loss_weight = float(options.modularity_loss_weight)
+        except ValueError:
+            raise ValueError(
+                f'modularity_loss_weight should be a float. You provided {options.modularity_loss_weight}.')
     if options.modularity_loss_weight < 0:
         raise ValueError(
             f'modularity_loss_weight should be greater than or equal to 0. You provided {options.modularity_loss_weight}.'
@@ -303,9 +319,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'purity_loss_weight'):
         options.purity_loss_weight = 300.0
     elif not isinstance(options.purity_loss_weight, float):
-        raise ValueError(f'purity_loss_weight should be a float. You provided {options.purity_loss_weight}.')
-    else:
-        options.purity_loss_weight = float(options.purity_loss_weight)
+        try:
+            options.purity_loss_weight = float(options.purity_loss_weight)
+        except ValueError:
+            raise ValueError(f'purity_loss_weight should be a float. You provided {options.purity_loss_weight}.')
     if options.purity_loss_weight < 0:
         raise ValueError(
             f'purity_loss_weight should be greater than or equal to 0. You provided {options.purity_loss_weight}.')
@@ -314,10 +331,11 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'regularization_loss_weight'):
         options.regularization_loss_weight = 0.1
     elif not isinstance(options.regularization_loss_weight, float):
-        raise ValueError(
-            f'regularization_loss_weight should be a float. You provided {options.regularization_loss_weight}.')
-    else:
-        options.regularization_loss_weight = float(options.regularization_loss_weight)
+        try:
+            options.regularization_loss_weight = float(options.regularization_loss_weight)
+        except ValueError:
+            raise ValueError(
+                f'regularization_loss_weight should be a float. You provided {options.regularization_loss_weight}.')
     if options.regularization_loss_weight < 0:
         raise ValueError(
             f'regularization_loss_weight should be greater than or equal to 0. You provided {options.regularization_loss_weight}.'
@@ -327,9 +345,10 @@ def gnn_opt_valid(options: Values, process='ontrac') -> Values:
     if not hasattr(options, 'beta'):
         options.beta = 0.03
     elif not isinstance(options.beta, float):
-        raise ValueError(f'beta should be a float. You provided {options.beta}.')
-    else:
-        options.beta = float(options.beta)
+        try:
+            options.beta = float(options.beta)
+        except ValueError:
+            raise ValueError(f'beta should be a float. You provided {options.beta}.')
     if options.beta < 0:
         raise ValueError(f'beta should be greater than or equal to 0. You provided {options.beta}.')
 
