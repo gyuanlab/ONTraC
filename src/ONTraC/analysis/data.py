@@ -209,12 +209,28 @@ class AnaData:
 
         # save options
         self.options = options
-        # get real path
-        params = read_yaml_file(f'{options.NN_dir}/samples.yaml')
-        self.rel_params = get_rel_params(options.NN_dir, params)
-        # save the original Cell_ID
-        self.cell_id = pd.read_csv(get_meta_data_file(options.NN_dir), usecols=['Cell_ID',
-                                                                                'Cell_Type']).set_index('Cell_ID')
+        
+        if hasattr(self.options, 'NN_dir'):
+
+            # get real path
+            params = read_yaml_file(f'{options.NN_dir}/samples.yaml')
+            self.rel_params = get_rel_params(options.NN_dir, params)
+            # save the original Cell_ID
+            self.cell_id = pd.read_csv(get_meta_data_file(options.NN_dir))
+            if 'Cell_ID' in self.cell_id.columns:
+                self.cell_id = self.cell_id.set_index('Cell_ID')[['Sample','Cell_Type','x','y']]
+            elif 'Spot_ID' in self.cell_id.columns:
+                self.cell_id = self.cell_id.set_index('Spot_ID')[['Sample','Cell_Type','x','y']]
+            else:
+                raise ValueError('Cannot find Cell_ID or Spot_ID in the meta_data file.')
+        else:  # not NN_dir, only support for visualization of meta_input
+            self.meta_input = pd.read_csv(self.options.meta_input)
+            if 'Cell_ID' in self.meta_input.columns:
+                self.meta_input = self.meta_input.set_index('Cell_ID')
+            elif 'Spot_ID' in self.meta_input.columns:
+                self.meta_input = self.meta_input.set_index('Spot_ID')
+            else:
+                raise ValueError('Cannot find Cell_ID or Spot_ID in the meta_input file.')
 
     @property
     def train_loss(self):
@@ -228,36 +244,36 @@ class AnaData:
             self._cell_type_codes = pd.read_csv(f'{self.options.NN_dir}/cell_type_code.csv', index_col=0)
         return self._cell_type_codes
 
-    def _load_cell_type_composition_and_NT_score(self) -> None:
+    def _load_cell_type_composition(self) -> None:
         data_df = pd.DataFrame()
         for sample in self.rel_params['Data']:
-            feature_file = f"{sample['Features'][:-27]}_Raw_CellTypeComposition.csv.gz"
+            feature_file = sample['Features']
             if not os.path.isfile(feature_file):
-                info('Raw cell type composition file not found, use the original one.')
-                feature_file = sample['Features']
-            cell_type_composition_df = pd.read_csv(sample['Features'], header=None)
+                raise FileNotFoundError(f"Cannot find cell type composition file: {feature_file}.")
+            cell_type_composition_df = pd.read_csv(feature_file, header=None)
+            cell_type_composition_df.index = self.cell_id[self.cell_id['Sample'] == sample['Name']].index
             cell_type_composition_df.columns = self.cell_type_codes.loc[np.arange(cell_type_composition_df.shape[1]),
                                                                         'Cell_Type'].tolist()  # type: ignore
-            NTScore_df = pd.read_csv(f'{self.options.NT_dir}/{sample["Name"]}_NTScore.csv.gz', index_col=0)
-            sample_df = pd.concat([NTScore_df.reset_index(drop=True), cell_type_composition_df], axis=1)
-            sample_df.index = NTScore_df.index
-            sample_df['sample'] = [sample["Name"]] * sample_df.shape[0]
-            data_df = pd.concat([data_df, sample_df])
+            data_df = pd.concat([data_df, cell_type_composition_df])
+        self._cell_type_composition = data_df[self.cell_id.index]
 
-        data_df = self.cell_id.join(data_df)
-        self._cell_type_composition = data_df[self.cell_type_codes['Cell_Type'].tolist() + ['sample', 'x', 'y']]
-        self._NT_score = data_df[['sample', 'x', 'y', 'Niche_NTScore', 'Cell_NTScore']]
+    def _load_NT_score(self) -> None:
+        data_df = pd.DataFrame()
+        for sample in self.rel_params['Data']:
+            NTScore_df = pd.read_csv(f'{self.options.NT_dir}/{sample["Name"]}_NTScore.csv.gz', index_col=0)
+        data_df = pd.concat([data_df, NTScore_df])
+        self._NT_score = data_df[self.cell_id.index]
 
     @property
     def cell_type_composition(self) -> DataFrame:
         if not hasattr(self, '_cell_type_composition'):
-            self._load_cell_type_composition_and_NT_score()
+            self._load_cell_type_composition()
         return self._cell_type_composition
 
     @property
     def NT_score(self) -> DataFrame:
         if not hasattr(self, '_NT_score'):
-            self._load_cell_type_composition_and_NT_score()
+            self._load_NT_score()
         return self._NT_score
 
     @property

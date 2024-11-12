@@ -6,5 +6,5 @@ IO_OPTIONS: Dict[str, List[str]] = {
     'ONTraC_GNN': ['NN_dir', 'GNN_dir'],  # graph neural network
     'ONTraC_NT': ['NN_dir', 'GNN_dir', 'NT_dir'],  # niche trajectory
     'ONTraC_GT': ['NN_dir', 'GNN_dir', 'NT_dir'],  # GNN & niche trajectory
-    'ONTraC_analysis': ['NN_dir', 'GNN_dir', 'NT_dir', 'output', 'log'],  # analysis
+    'ONTraC_analysis': ['input', 'NN_dir', 'GNN_dir', 'NT_dir', 'output', 'log'],  # analysis
 }

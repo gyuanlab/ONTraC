@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def saptial_figsize(sample_df, scale_factor=1) -> tuple[int, int]:
+def saptial_figsize(sample_df, scaling_factor: Union[int, float]=1) -> tuple[int, int]:
     """
     Calculate the figure size for spatial-based plot according to the points and the span of x and y.
     :param sample_df: pd.DataFrame, the sample data.
@@ -25,8 +25,8 @@ def saptial_figsize(sample_df, scale_factor=1) -> tuple[int, int]:
 
     # debug(f'points density: {points_density}')
 
-    fig_width = x_span / 2_000 * scale_factor * np.sqrt(points_density) + .5  # Adding 2 for colorbar space
-    fig_height = y_span / 2_000 * scale_factor * np.sqrt(points_density) + .2  # Adding 1.5 for title space
+    fig_width = x_span / 2_000 * scaling_factor * np.sqrt(points_density) + .5  # Adding 2 for colorbar space
+    fig_height = y_span / 2_000 * scaling_factor * np.sqrt(points_density) + .2  # Adding 1.5 for title space
 
     # debug(f'scale_factor: {scale_factor}')
     # debug(f'fig_width: {fig_width}')

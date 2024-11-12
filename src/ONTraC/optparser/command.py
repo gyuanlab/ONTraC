@@ -3,6 +3,7 @@ from optparse import OptionGroup, OptionParser, Values
 
 from ..constants import IO_OPTIONS  # type: Dict[str, List[str]]
 from ..log import *
+from ..optparser._analysis import *
 from ..version import __version__
 from ._IO import *
 from ._NN import *
@@ -205,7 +206,7 @@ def opt_gnn_validate(optparser: OptionParser) -> Values:
 
     info(message='------------------ RUN params memo ------------------ ')
     # print parameters to stdout
-    write_io_options_memo(options=options, io_options=IO_OPTIONS)
+    write_io_options_memo(options=options, io_options=io_options)
     write_train_options_memo(options=options)
     write_GCN_options_memo(options=options)
     write_GP_options_memo(options=options)
@@ -334,10 +335,65 @@ def opt_gt_validate(optparser: OptionParser) -> Values:
 
 
 # ------------------------------------
+# ONTraC_analysis functions
+# ------------------------------------
+def prepare_analysis_optparser() -> OptionParser:
+    """
+    Prepare optparser object. New options will be added in thisfunction first.
+    :return: OptionParser object.
+    """
+
+    # args
+    io_options: List[str] = IO_OPTIONS['ONTraC_analysis']  # type: ignore
+
+    usage = f'''USAGE: %prog <--NN-dir PREPROCESSING_DIR> <--GNN-dir GNN_DIR> <--NT-dir NTSCORE_DIR> [--device DEVICE]'''
+    description = 'ONTraC_analysis: analysis of ONTraC results'
+
+    # option processor
+    optparser = OptionParser(version=f'%prog {__version__}', description=description, usage=usage, add_help_option=True)
+
+    add_IO_options_group(optparser=optparser, io_options=io_options)
+    add_visualization_group(optparser)
+    add_suppress_group(optparser)
+
+    return optparser
+
+
+def opt_analysis_validate(optparser: OptionParser) -> Values:
+    """Validate options from a OptParser object.
+
+    :param optparser: OptionParser object.
+    :return: Values object.
+    """
+
+    # args
+    io_options: List[str] = IO_OPTIONS['ONTraC_analysis']  # type: ignore
+
+    (options, args) = optparser.parse_args()
+
+    validate_io_options(optparser=optparser,
+                        options=options,
+                        io_options=io_options,
+                        required=False,
+                        overwrite_validation=False)
+    validate_visualization_options(options)
+    validate_suppress_options(options)
+
+    info('------------------ RUN params memo ------------------ ')
+    # print parameters to stdout
+    write_io_options_memo(options, io_options)
+    write_visualization_options_memo(options)
+    write_suppress_options_memo(options)
+    info(message='--------------- RUN params memo end ----------------- ')
+
+    return options
+
+
+# ------------------------------------
 # functions to be exported
 # ------------------------------------
 __all__ = [
     'prepare_ontrac_optparser', 'opt_ontrac_validate', 'prepare_nn_optparser', 'opt_nn_validate',
     'prepare_gnn_optparser', 'opt_gnn_validate', 'prepare_nt_optparser', 'opt_nt_validate', 'prepare_gt_optparser',
-    'opt_gt_validate'
+    'opt_gt_validate', 'prepare_analysis_optparser', 'opt_analysis_validate'
 ]
