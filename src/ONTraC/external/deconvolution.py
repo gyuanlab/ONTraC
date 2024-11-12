@@ -13,7 +13,7 @@ def apply_STdeconvolve(NN_dir: Union[str, Path], exp_matrix: np.ndarray, ct_num:
     """
     Apply STdeconvolve to spot-level data.
     :param NN_dir: Niche network directory.
-    :param exp_matrix: Expression matrix.  #spot x #gene
+    :param exp_matrix: Expression matrix.  #gene x #spot
     :param ct_num: Number of cell types.
     :return: Deconvoluted expression matrix.  #spot x #cell_type
     """
@@ -21,6 +21,9 @@ def apply_STdeconvolve(NN_dir: Union[str, Path], exp_matrix: np.ndarray, ct_num:
     # save expression matrix in csv format
     exp_matrix_file = f'{NN_dir}/filtered_spot_exp.csv.gz'
     exp_matrix.to_csv(exp_matrix_file, sep=',', index=True, header=True, compression='gzip')
+
+    # run STdeconvolve
+    info(message=f'Peforming cell type deconvolution using STdeconvolve with {ct_num} cell types.')
 
     spot_x_cell_type_file = '/spot_x_celltype_deconvolution.csv.gz'
 

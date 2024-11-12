@@ -40,7 +40,7 @@ def add_IO_options_group(optparser: OptionParser, io_options: Optional[List[str]
         group_io.add_option('--low-res-exp-input',
                             dest='low_res_exp_input',
                             type='string',
-                            help='Spot X gene matrix in csv format for low-resolution dataset.')
+                            help='Gene X spot matrix in csv format for low-resolution dataset.')
     if 'log' in io_options:
         group_io.add_option('-l', '--log', dest='log', type='string', help='Log file.')
 
