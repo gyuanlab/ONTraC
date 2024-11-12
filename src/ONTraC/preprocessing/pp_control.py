@@ -62,10 +62,12 @@ def perform_deconvolution(NN_dir: Union[str, Path], dc_method: str, exp_matrix: 
     Perform deconvolution.
     :param NN_dir: str or Path, save directory.
     :param dc_method: str, deconvolution method.
-    :param exp_matrix: np.ndarray, expression matrix.
+    :param exp_matrix: pd.DataFrame, expression matrix.  #gene x #spot
     :param dc_cell_type_num: int, number of cell types.
-    :return: np.ndarray, deconvoluted cell type matrix.
+    :return: np.ndarray, deconvoluted cell type matrix.  #spot x #cell_type
     """
+
+    info(message='            -------- deconvolution -------           ')
 
     if dc_method == 'STdeconvolve':
         deconvoluted_ct_matrix = apply_STdeconvolve(NN_dir=NN_dir, exp_matrix=exp_matrix, ct_num=dc_cell_type_num)
@@ -113,11 +115,11 @@ def preprocessing_nn(meta_input: Union[str, Path],
             raise ValueError('dc_method and dc_cell_type_num are required for spot-level data.')
         ct_coding_matrix = perform_deconvolution(NN_dir=NN_dir,
                                                  dc_method=dc_method,
-                                                 exp_matrix=input_data['low_res_exp'].values,
+                                                 exp_matrix=input_data['low_res_exp'],
                                                  dc_cell_type_num=dc_cell_type_num)
         ct_coding = pd.DataFrame(data=ct_coding_matrix,
                                  columns=np.arange(ct_coding_matrix.shape[1]),
-                                 index=input_data['low_res_exp'].index)
+                                 index=input_data['low_res_exp'].columns)
         ct_coding.to_csv(f'{NN_dir}/spotxcelltype.csv.gz', index=True)
 
         # save cell type code

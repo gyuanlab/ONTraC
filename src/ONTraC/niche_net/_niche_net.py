@@ -151,7 +151,12 @@ def save_niche_network(sample_name: str, sample_meta_df: pd.DataFrame, indices_m
 
     # save coordinates
     # TODO: support 3D coordinates
-    coord_df = sample_meta_df[['Cell_ID', 'x', 'y']]
+    if 'Cell_ID' in sample_meta_df.columns:
+        coord_df = sample_meta_df[['Cell_ID', 'x', 'y']]
+    elif 'Spot_ID' in sample_meta_df.columns:
+        coord_df = sample_meta_df[['Spot_ID', 'x', 'y']]
+    else:
+        raise ValueError('Cell_ID or Spot_ID is required for saving coordinates.')
     coord_df.to_csv(f'{save_dir}/{sample_name}_Coordinates.csv', index=False)
 
     # save the kNN network
@@ -250,8 +255,9 @@ def construct_niche_network(meta_df: pd.DataFrame,
 
     # construct niche network for each sample
     for sample_name in samples:
+        sample_spot_ids = meta_df[meta_df['Sample'] == sample_name]['Spot_ID']
         sample_meta_df = meta_df[meta_df['Sample'] == sample_name]
-        sample_ct_coding = ct_coding[meta_df['Sample'] == sample_name]
+        sample_ct_coding = ct_coding.loc[sample_spot_ids]
         construct_niche_network_sample(sample_name=sample_name,
                                        sample_meta_df=sample_meta_df,
                                        sample_ct_coding=sample_ct_coding,

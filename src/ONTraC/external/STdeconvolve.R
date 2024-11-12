@@ -31,8 +31,9 @@ ldas <- fitLDA(t(as.matrix(corpus)), Ks = c(num_cell_type))
 optLDA <- optimalModel(models = ldas, opt = "min") # nolint
 results <- getBetaTheta(optLDA, perc.filt = 0.05, betaScale = 1000)
 
-write.table(
-    results$theta,
-    file = file.path(save_directory, output_file_name),
-    sep = ","
-)
+write.table(results$theta,
+            file = gzfile(paste0(save_directory, output_file_name)),
+            sep = ",",
+            row.names = FALSE,
+            col.names = FALSE,
+            quote = FALSE)

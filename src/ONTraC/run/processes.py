@@ -45,6 +45,7 @@ def niche_network_construct(options: Values) -> None:
                                           dc_cell_type_num=options.dc_cell_type_num)
 
     # construct niche network
+    info(message='            -------- niche network -------           ')
     construct_niche_network(meta_df=meta_df,
                             ct_coding=ct_coding,
                             save_dir=options.NN_dir,
