@@ -1,7 +1,8 @@
 # niche network construction options
 from optparse import OptionGroup, OptionParser, Values
+from typing import List
 
-from ..constants import IO_OPTIONS  # type: Dict[str, List[str]]
+from ..constants import IO_OPTIONS
 from ..log import *
 from ..optparser._analysis import *
 from ..version import __version__
@@ -346,7 +347,8 @@ def prepare_analysis_optparser() -> OptionParser:
     # args
     io_options: List[str] = IO_OPTIONS['ONTraC_analysis']  # type: ignore
 
-    usage = f'''USAGE: %prog <--NN-dir PREPROCESSING_DIR> <--GNN-dir GNN_DIR> <--NT-dir NTSCORE_DIR> [--device DEVICE]'''
+    usage = f'''USAGE: %prog <-o output> [--NN-dir PREPROCESSING_DIR] [--GNN-dir GNN_DIR] [--NT-dir NTSCORE_DIR] [--meta-input META_INPUT]
+    [--scale-factor SCALE_FACTOR] [--reverse] [--suppress-cell-type-composition] [--suppress-niche-cluster-loadings] [--suppress-niche-trajectory]'''
     description = 'ONTraC_analysis: analysis of ONTraC results'
 
     # option processor

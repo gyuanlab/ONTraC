@@ -15,8 +15,9 @@ from .utils import saptial_figsize
 
 
 def plot_cell_type_composition_dataset(
-        cell_type_composition: pd.DataFrame,
         cell_id: pd.DataFrame,
+        cell_type_codes: pd.DataFrame,
+        cell_type_composition: pd.DataFrame,
         output_file_path: Optional[Union[str, Path]] = None) -> Optional[Tuple[plt.Figure, plt.Axes]]:
     """
     Plot spatial distribution of cell type composition.
@@ -26,8 +27,9 @@ def plot_cell_type_composition_dataset(
     :return: None or Tuple[plt.Figure, plt.Axes].
     """
 
+    cell_type_composition = cell_type_composition.join(cell_id[['x', 'y']])
     samples: List[str] = cell_id['Sample'].unique().tolist()
-    cell_types: List[str] = cell_id['Cell_Type'].tolist()
+    cell_types: List[str] = cell_type_codes['Cell_Type'].tolist()
 
     M, N = len(samples), len(cell_types)
     fig, axes = plt.subplots(M, N, figsize=(3.5 * N, 3 * M))
@@ -71,14 +73,16 @@ def plot_cell_type_composition_dataset_from_anandata(ana_data: AnaData) -> Optio
         warning(str(e))
         return None
 
-    return plot_cell_type_composition_dataset(cell_type_composition=ana_data.cell_type_composition,
-                                              cell_id=ana_data.cell_type_codes,
+    return plot_cell_type_composition_dataset(cell_id=ana_data.cell_id,
+                                              cell_type_codes=ana_data.cell_type_codes,
+                                              cell_type_composition=ana_data.cell_type_composition,
                                               output_file_path=ana_data.options.output)
 
 
 def plot_cell_type_composition_sample(
-        cell_type_composition: pd.DataFrame,
         cell_id: pd.DataFrame,
+        cell_type_codes: pd.DataFrame,
+        cell_type_composition: pd.DataFrame,
         spatial_scaling_factor: float = 1.0,
         output_file_path: Optional[Union[str, Path]] = None) -> Optional[List[Tuple[plt.Figure, plt.Axes]]]:
     """
@@ -86,8 +90,9 @@ def plot_cell_type_composition_sample(
     :return: None.
     """
 
+    cell_type_composition = cell_type_composition.join(cell_id[['x', 'y']])
     samples: List[str] = cell_id['Sample'].unique().tolist()
-    cell_types: List[str] = cell_id['Cell_Type'].tolist()
+    cell_types: List[str] = cell_type_codes['Cell_Type'].tolist()
 
     output = []
     N = len(cell_types)
@@ -132,8 +137,9 @@ def plot_cell_type_composition_sample_from_anandata(ana_data: AnaData) -> Option
         warning(str(e))
         return None
 
-    return plot_cell_type_composition_sample(cell_type_composition=ana_data.cell_type_composition,
-                                             cell_id=ana_data.cell_type_codes,
+    return plot_cell_type_composition_sample(cell_id=ana_data.cell_id,
+                                             cell_type_codes=ana_data.cell_type_codes,
+                                             cell_type_composition=ana_data.cell_type_composition,
                                              spatial_scaling_factor=ana_data.options.scale_factor,
                                              output_file_path=ana_data.options.output)
 
@@ -205,7 +211,7 @@ def plot_niche_NT_score_dataset_from_anadata(ana_data: AnaData) -> Optional[Tupl
         return None
 
     return plot_niche_NT_score_dataset(NT_score=ana_data.NT_score,
-                                       cell_id=ana_data.cell_type_codes,
+                                       cell_id=ana_data.cell_id,
                                        reverse=ana_data.options.reverse,
                                        output_file_path=ana_data.options.output)
 
@@ -265,7 +271,7 @@ def plot_niche_NT_score_sample_from_anadata(ana_data: AnaData) -> Optional[List[
         return None
 
     return plot_niche_NT_score_sample(NT_score=ana_data.NT_score,
-                                      cell_id=ana_data.cell_type_codes,
+                                      cell_id=ana_data.cell_id,
                                       reverse=ana_data.options.reverse,
                                       spatial_scaling_factor=ana_data.options.scale_factor,
                                       output_file_path=ana_data.options.output)
@@ -338,7 +344,7 @@ def plot_cell_NT_score_dataset_from_anadata(ana_data: AnaData) -> Optional[Tuple
         return None
 
     return plot_cell_NT_score_dataset(NT_score=ana_data.NT_score,
-                                      cell_id=ana_data.cell_type_codes,
+                                      cell_id=ana_data.cell_id,
                                       reverse=ana_data.options.reverse,
                                       output_file_path=ana_data.options.output)
 
@@ -398,7 +404,7 @@ def plot_cell_NT_score_sample_from_anadata(ana_data: AnaData) -> Optional[List[T
         return None
 
     return plot_cell_NT_score_sample(NT_score=ana_data.NT_score,
-                                     cell_id=ana_data.cell_type_codes,
+                                     cell_id=ana_data.cell_id,
                                      reverse=ana_data.options.reverse,
                                      spatial_scaling_factor=ana_data.options.scale_factor,
                                      output_file_path=ana_data.options.output)

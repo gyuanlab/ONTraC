@@ -5,7 +5,9 @@
 Added:
 
 - Low resolution (spot-based) data support
-- External modules (RCTD)
+  - running
+  - analysis
+- External modules (STDeconvolve)
 
 Changed:
 
@@ -17,6 +19,7 @@ Changed:
   - Rename `NicheTrajectory` to `ONTraC_NT`
   - Rename `ONTraC_GP` to `ONTraC_GT`
 - Refine the optparser structures
+  - merge analysis optparser to main optparser module
 - Extract preprocessing modules
 
 Fixed:

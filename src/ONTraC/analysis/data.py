@@ -244,6 +244,12 @@ class AnaData:
             self._cell_type_codes = pd.read_csv(f'{self.options.NN_dir}/cell_type_code.csv', index_col=0)
         return self._cell_type_codes
 
+    @property
+    def cell_type_coding(self) -> np.ndarray:
+        if not hasattr(self, '_cell_type_coding'):
+            self._cell_type_coding = np.loadtxt(f'{self.options.NN_dir}/ct_coding.csv', delimiter=',')
+        return self._cell_type_coding
+
     def _load_cell_type_composition(self) -> None:
         data_df = pd.DataFrame()
         for sample in self.rel_params['Data']:
@@ -255,20 +261,20 @@ class AnaData:
             cell_type_composition_df.columns = self.cell_type_codes.loc[np.arange(cell_type_composition_df.shape[1]),
                                                                         'Cell_Type'].tolist()  # type: ignore
             data_df = pd.concat([data_df, cell_type_composition_df])
-        self._cell_type_composition = data_df[self.cell_id.index]
-
-    def _load_NT_score(self) -> None:
-        data_df = pd.DataFrame()
-        for sample in self.rel_params['Data']:
-            NTScore_df = pd.read_csv(f'{self.options.NT_dir}/{sample["Name"]}_NTScore.csv.gz', index_col=0)
-        data_df = pd.concat([data_df, NTScore_df])
-        self._NT_score = data_df[self.cell_id.index]
+        self._cell_type_composition = data_df.loc[self.cell_id.index]
 
     @property
     def cell_type_composition(self) -> DataFrame:
         if not hasattr(self, '_cell_type_composition'):
             self._load_cell_type_composition()
         return self._cell_type_composition
+
+    def _load_NT_score(self) -> None:
+        data_df = pd.DataFrame()
+        for sample in self.rel_params['Data']:
+            NTScore_df = pd.read_csv(f'{self.options.NT_dir}/{sample["Name"]}_NTScore.csv.gz', index_col=0)
+        data_df = pd.concat([data_df, NTScore_df])
+        self._NT_score = data_df.loc[self.cell_id.index]
 
     @property
     def NT_score(self) -> DataFrame:

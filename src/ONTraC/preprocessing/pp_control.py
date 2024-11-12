@@ -125,6 +125,9 @@ def preprocessing_nn(meta_input: Union[str, Path],
         # save cell type code
         save_cell_type_code(save_dir=NN_dir, cell_types=pd.Series(ct_coding.columns))
 
+    # save cell type coding matrix
+    np.savetxt(f'{NN_dir}/ct_coding.csv.gz', X=ct_coding_matrix, delimiter=',')
+
     return meta_df, ct_coding
 
 
