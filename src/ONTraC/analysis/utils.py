@@ -1,10 +1,10 @@
-from typing import Union
+from typing import Union, Tuple
 
 import numpy as np
 import pandas as pd
 
 
-def saptial_figsize(sample_df, scaling_factor: Union[int, float]=1) -> tuple[int, int]:
+def saptial_figsize(sample_df, scaling_factor: Union[int, float]=1) -> Tuple[int, int]:
     """
     Calculate the figure size for spatial-based plot according to the points and the span of x and y.
     :param sample_df: pd.DataFrame, the sample data.

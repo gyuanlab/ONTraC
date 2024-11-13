@@ -8,6 +8,7 @@ authors = [
           {name = "Wen Wang", email = "wwang.bio@gmail.com"},
           {name = "Shiwei Zheng", email = "swzheng29@gmail.com"},
           {name = "Crystal Shin", email = "sjcshin5040@gmail.com"},
+          {name = "Joselyn C. Chávez-Fuentes", email = "joselynchavezf@gmail.com"},
           {name = "Guo-Cheng Yuan", email = "gcyuan@gmail.com"},
           ]
 description = "A niche-centered, machine learning method for constructing spatially continuous trajectories"
