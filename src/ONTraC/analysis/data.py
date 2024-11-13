@@ -220,7 +220,7 @@ class AnaData:
             if 'Cell_ID' in self.cell_id.columns:
                 self.cell_id = self.cell_id.set_index('Cell_ID')[['Sample','Cell_Type','x','y']]
             elif 'Spot_ID' in self.cell_id.columns:
-                self.cell_id = self.cell_id.set_index('Spot_ID')[['Sample','Cell_Type','x','y']]
+                self.cell_id = self.cell_id.set_index('Spot_ID')[['Sample','x','y']]
             else:
                 raise ValueError('Cannot find Cell_ID or Spot_ID in the meta_data file.')
         else:  # not NN_dir, only support for visualization of meta_input
